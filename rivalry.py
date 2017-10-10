@@ -13,7 +13,8 @@ def stimulus(k,c,r):
     """divide input stimulus"""
     ks = k
     kc = c
-    k = (ks + r*kc)
+    imb = r
+    k = (ks + (imb*kc))
     return k
 
 def dynamics(d,imbalance,ton,toff,dx,full=False):
@@ -21,7 +22,7 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
     and time as arrays in key,value pairs"""
     
     #unpack fixed parameters
-    param = p
+    param = d
     beta = param['beta']
     alpha = param['alpha']
     gamma = param['gamma']
@@ -32,9 +33,9 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
 
     #input stimulus
     r=imbalance
-    ks = p['ks']
-    kc = p['kc']
-    kb = p['kb']
+    ks = param['ks']
+    kc = param['kc']
+    kb = param['kb']
     k1 = stimulus(ks,kc,r)
     k2 = stimulus(ks,kc,-r)#weaker stimulus
 
@@ -50,10 +51,10 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
 
     u1 = []
     u2 = []
-    a1 = []
-    a2 = []
-    z1 = []
-    z2 = []
+    #a1 = []
+    #a2 = []
+    #z1 = []
+    #z2 = []
     t = []
     i=-1
     
@@ -63,13 +64,12 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
         stim_on = int(equil<i)
         S1 = k1*stim_on
         S2 = k2*stim_on
-        if full==True:
-           
+        if full==True: 
             Z[0,0] = Z[0,0] -dt*(Z[0,0] + np.sqrt(dt)*sigma*np.random.randn())
             Z[1,0] = Z[1,0] -dt*(Z[1,0] + np.sqrt(dt)*sigma*np.random.randn())
 
-            U[0,1] = U[0,0]+dt*(-U[0,0]+gain_pl_sqrt(kb+S1 - beta*A[0,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[0,0])))/tau_u
-            U[1,1] = U[1,0]+dt*(-U[1,0]+gain_pl_sqrt(kb+S2 - beta*A[1,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[1,0])))/tau_u
+            U[0,1] = U[0,0]+dt*(-U[0,0]+gain_pl_sqrt(kb+S1 - beta*A[1,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[0,0])))/tau_u
+            U[1,1] = U[1,0]+dt*(-U[1,0]+gain_pl_sqrt(kb+S2 - beta*A[0,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[1,0])))/tau_u
             U[0,0] = U[0,1]
             U[1,0] = U[1,1]
 
@@ -78,17 +78,17 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
 
             u1.append(U[0,0])
             u2.append(U[1,0])
-            a1.append(A[0,0])
-            a2.append(A[1,0])
-            z1.append(Z[0,0])
-            z2.append(Z[1,0])
+            #a1.append(A[0,0])
+            #a2.append(A[1,0])
+            #z1.append(Z[0,0])
+            #z2.append(Z[1,0])
 
         else:
             Z[0,0] = Z[0,0] -dt*(Z[0,0] + np.sqrt(dt)*sigma*np.random.randn())
             Z[1,0] = Z[1,0] -dt*(Z[1,0] + np.sqrt(dt)*sigma*np.random.randn())
             
-            U[0,1] = gain_pl_sqrt(kb+S1 - beta*A[0,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[0,0]))/tau_u
-            U[1,1] = gain_pl_sqrt(kb+S2 - beta*A[1,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[1,0]))/tau_u
+            U[0,1] = gain_pl_sqrt(kb+S1 - beta*A[1,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[0,0]))/tau_u
+            U[1,1] = gain_pl_sqrt(kb+S2 - beta*A[0,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[1,0]))/tau_u
             U[0,0]= U[0,1]
             U[1,0]= U[1,1]
 
@@ -97,19 +97,19 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
             
             u1.append(U[0,0])
             u2.append(U[1,0])
-            a1.append(A[0,0])
-            a2.append(A[1,0])
-            z1.append(Z[0,0])
-            z2.append(Z[1,0])
+            #a1.append(A[0,0])
+            #a2.append(A[1,0])
+            #z1.append(Z[0,0])
+            #z2.append(Z[1,0])
 
     solution = {}
     solution['t'] = t
     solution['u1'] = u1
     solution['u2'] = u2
-    solution['a1'] = a1
-    solution['a2'] = a2
-    solution['z1'] = z1
-    solution['z2'] = z2
+    #solution['a1'] = a1
+    #solution['a2'] = a2
+    #solution['z1'] = z1
+    #solution['z2'] = z2
 
     return solution
 
@@ -177,7 +177,7 @@ def dominance(N,xi,xj,pre=None):
                 
 def first_epoch(x,y,t,pre_t,dt):
     t1 = pre_t
-    start = int(1/dt)
+    start = 100
     a=[]
     b=[]
     c=[]
