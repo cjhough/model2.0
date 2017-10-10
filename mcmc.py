@@ -48,11 +48,11 @@ def save(lis1,lis2,lis3,x,n,name):
     basename = name
     fn = basename+interval
     indx = x
-    
+
     thetalist = lis1
     chilist = lis2
     sumlist = lis3
-    
+
     f1 = str(fn+"THETA.pkl")
     d1 = pd.DataFrame(thetalist,index=indx)
     d1.to_pickle(f1)
@@ -84,6 +84,7 @@ savestep = int(argv[3])
 outfile = str(argv[4])
 savepoints = range(savestep,burntime,savestep)
 pathname = str('/Users/carly/CODE/model2.0/storeresults/')
+outfilename = pathname+outfile
 
 thetafirst = pd.read_pickle(init_guess)
 theta_cur = pd.Series(thetafirst)
@@ -183,16 +184,16 @@ while n < burntime:
         print"all chi values:"
         print chicur
         theta_prop = newtheta(theta_cur)
-        
+
     else:
         theta_prop = newtheta(theta_cur)
 
-    if n in savepoints:    
-        save(THETA,CHI,SUM,x,n,outfile)
+    if n in savepoints:
+        save(THETA,CHI,SUM,x,n,outfilename)
     else:
         pass
 
-save(THETA,CHI,SUM,x,n,outfile)
+save(THETA,CHI,SUM,x,n,outfilename)
 
 print "done"
 
