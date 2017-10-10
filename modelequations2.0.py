@@ -41,7 +41,7 @@ Z[0,0] = Z[0,0] -dt*(Z[0,0] + np.sqrt(dt)*sigma*np.random.randn())
 Z[1,0] = Z[1,0] -dt*(Z[1,0] + np.sqrt(dt)*sigma*np.random.randn())
 
 U[0,1] = U[0,0]+dt*(-U[0,0]+gain_pl_sqrt(kb+S1 - beta*A[0,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[0,0])))/tau_u
-U[1,1] = U[1,0]+dt*(-U[1,0]+gain_pl_sqrt(kb+S2 - beta*A[1,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[1,0])))/tau_u
+U[1,1] = U[1,0]+dt*(-U[1,0]+gain_pl_sqrt(kb+S2 - beta*A[1,0]*U[0,0] +alpha*U[1,0] + Z[1,0]*(1+mu*U[1,0])))/tau_u
 U[0,0] = U[0,1]
 U[1,0] = U[1,1]
 
