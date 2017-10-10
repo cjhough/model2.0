@@ -1,0 +1,24 @@
+#Initials System Parameters
+
+#pml0 = [1.42528,2.07703,1248.,.0419821,.1918590,.00253604,.109369,.9]
+#names = [S,beta,alpha,gamma,tau,taua,sigma,mu]
+#beta = p[1]
+#alpha = 0.
+#gamma = p[2]
+#tau = 10.
+#taua = p[3]
+#sigma = p[4]
+#mu = p[8]
+#S = [p[5] + p[6]*C;p[5] - p[6]*C;p[7]]
+
+p = {}
+p['beta']=1.42528
+p['alpha']=1
+p['gamma'] = 2.07703
+p['tau_a']=1248.0
+p['tau_u']=10
+p['sigma']=0.0419821
+p['mu']=0.9
+p['ks']=0.1918590
+p['kc']=0.00253604
+p['kb'] = 0.109369
