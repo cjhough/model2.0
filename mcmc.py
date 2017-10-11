@@ -111,7 +111,7 @@ print theta_prop
 
 index = [0,20,40,60,80]
 cv = 0.6
-cv_var = 0.25
+cv_var = 0.2
 p1_var = 0.1
 fcv = lambda x: x*cv
 fcv_var = lambda x:(x*cv_var)
@@ -153,7 +153,7 @@ print variance
 
 print"running current theta"
 sustained = 1
-onset = 100
+onset = 200
 m1 = model.run(theta_cur,sustained,onset)
 m1.index = index
 m1.columns = col
