@@ -132,6 +132,7 @@ data['MEAN_U2'] = syU2['MEAN']
 data['SD_U1'] = data['MEAN_U1'].map(fcv)
 data['SD_U2'] = data['MEAN_U2'].map(fcv)
 data.index=index
+col = data.columns
 
 variance = pd.DataFrame()
 variance['COUNTS_U1'] = data['COUNTS_U1'].map(fp1_var)
