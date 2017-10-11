@@ -8,7 +8,24 @@ def chisq(data,model,variance):
     d = data
     m = model
     v = variance
-    chi = ((d-m)**2)/(v)
+    
+    #for first epoch probability
+    fmax = lambda x:(max(x,0.001)**2)
+    N1 = m['COUNTS_U1']
+    x1 = (m['FIRST_EPOCH_PROB_U1']-data['FIRST_EPOCH_PROB_U1'])**2
+    s1 = m['FIRST_EPOCH_PROB_U1'].map(fmax)
+    N2 = m['COUNTS_U2']
+    x2 = (m['FIRST_EPOCH_PROB_U2']-data['FIRST_EPOCH_PROB_U2'])**2
+    s2 = m['FIRST_EPOCH_PROB_U2'].map(fmax)
+    
+    #other chi follow form: chi = ((d-m)**2)/(v**2)
+    chi = pd.DataFrame()
+    chi['FIRST_EPOCH_PROB_U1'] = (N1*(x1/s1) + N2*(x2/s2))
+    chi['MEAN_U1'] = ((m['MEAN_U1']-data['MEAN_U1'])**2)/(variance['MEAN_U1']**2)
+    chi['MEAN_U2'] = ((m['MEAN_U2']-data['MEAN_U2'])**2)/(variance['MEAN_U2']**2)
+    chi['SD_U1'] = ((m['SD_U1']-data['SD_U1'])**2)/(variance['SD_U1']**2)
+    chi['SD_U2'] = ((m['SD_U2']-data['SD_U2'])**2)/(variance['SD_U2']**2)
+    
     return chi
 
 def chisum(df):
@@ -97,8 +114,8 @@ cv = 0.6
 cv_var = 0.25
 p1_var = 0.1
 fcv = lambda x: x*cv
-fcv_var = lambda x:(x*cv_var)**2
-fp1_var = lambda x:(x*p1_var)**2
+fcv_var = lambda x:(x*cv_var)
+fp1_var = lambda x:(x*p1_var)
 
 #load data
 syprob = pd.read_csv('sy_prob.csv',index_col=0)
@@ -106,7 +123,10 @@ syU1 = pd.read_csv('syU1.csv',index_col=0)
 syU2 = pd.read_csv('syU2.csv',index_col=0)
 
 data = pd.DataFrame()
-data['FIRST_EPOCH_PROB'] = syprob['U1']
+data['FIRST_EPOCH_PROB_U1'] = syprob['U1']
+data['FIRST_EPOCH_PROB_U2'] = syprob['U2']
+data['COUNTS_U1'] = syprob['counts_U1']
+data['COUNTS_U2'] = syprob['counts_U2']
 data['MEAN_U1'] = syU1['MEAN']
 data['MEAN_U2'] = syU2['MEAN']
 data['SD_U1'] = data['MEAN_U1'].map(fcv)
@@ -115,7 +135,10 @@ data.index=index
 col = data.columns
 
 variance = pd.DataFrame()
-variance['FIRST_EPOCH_PROB'] = data['FIRST_EPOCH_PROB'].map(fp1_var)
+variance['FIRST_EPOCH_PROB_U1'] = data['FIRST_EPOCH_PROB_U1'].map(fp1_var)
+variance['FIRST_EPOCH_PROB_U2'] = data['FIRST_EPOCH_PROB_U2'].map(fp1_var)
+variance['COUNTS_U1'] = data['COUNTS_U1'].map(fp1_var)
+variance['COUNTS_U2'] = data['COUNTS_U2'].map(fp1_var)
 variance['MEAN_U1'] = data['MEAN_U1'].map(fcv_var)
 variance['MEAN_U2'] = data['MEAN_U2'].map(fcv_var)
 variance['SD_U1'] = data['SD_U1'].map(fcv_var)
@@ -130,13 +153,13 @@ print variance
 
 print"running current theta"
 sustained = 1
-onset = 500
+onset = 100
 m1 = model.run(theta_cur,sustained,onset)
 m1.index = index
 m1.columns = col
 
 #calculate chi
-chicur = pd.DataFrame(chisq(data,m1,variance),columns=col,index=index)
+chicur = pd.DataFrame(chisq(data,m1,variance),index=index)
 sumchicur = chisum(chicur)
 
 print"here is Y1:"
@@ -165,7 +188,7 @@ while n < burntime:
     m2.index = index
     m2.columns = col
 
-    chiprop = pd.DataFrame(chisq(data,m2,variance),columns=col,index=index)
+    chiprop = pd.DataFrame(chisq(data,m2,variance),index=index)
     #chipenalty = taupen(theta_prop['tau_a'])#+kpen(theta_prop['KS'],theta_prop['KC'])
     sumchiprop = chisum(chiprop)
 

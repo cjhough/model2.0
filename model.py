@@ -8,13 +8,13 @@ def run(parameters,ntrials,onsettrial):
     theta = {}
     theta = parameters
 
-    condition = [1,2,3,4,5]
+    condition = [0,1,2,3,4]
     #SUSTAINED = np.arange(ntrials)
     ONSET = np.arange(onsettrial)
 
     dt = 1
     dom_ms = 500000
-    onset_ms = 3000
+    onset_ms = 6000
 
     prestim = 6000
 
@@ -67,9 +67,15 @@ def run(parameters,ntrials,onsettrial):
 
             first = rv.first_epoch(U1p,U2p,Tp,prestim,dt)
             LEADER.append(first)
+        
+        count1 = LEADER.count(1)
+        count2 = LEADER.count(2)
 
         FINAL_DATA = {}
-        FINAL_DATA['FIRST_EPOCH_PROB'] = rv.prob_seq(LEADER,1)
+        FINAL_DATA['FIRST_EPOCH_PROB_U1'] = rv.prob_seq(LEADER,1,2)
+        FINAL_DATA['FIRST_EPOCH_PROB_U2'] = rv.prob_seq(LEADER,2,1)
+        FINAL_DATA['COUNTS_U1'] = count1
+        FINAL_DATA['COUNTS_U2'] = count2
         FINAL_DATA['MEAN_U1'] = np.mean(TD1)
         FINAL_DATA['MEAN_U2'] = np.mean(TD2)
         FINAL_DATA['SD_U1'] = np.std(TD1)

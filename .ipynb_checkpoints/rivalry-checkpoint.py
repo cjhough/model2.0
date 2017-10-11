@@ -177,7 +177,7 @@ def dominance(N,xi,xj,pre=None):
                 
 def first_epoch(x,y,t,pre_t,dt):
     t1 = pre_t
-    start = int(1/dt)
+    start = 100
     a=[]
     b=[]
     c=[]
@@ -242,11 +242,11 @@ def first_epoch(x,y,t,pre_t,dt):
     record_winner = firstpercept
     return record_winner
 
-def prob_seq(s,e):
+def prob_seq(s,e1,e2):
     """degree of bias in probability of being first percept"""
     win_results = s
-    winner = float(win_results.count(e))
-    loser = float(win_results.count(2))
+    winner = float(win_results.count(e1))
+    loser = float(win_results.count(e2))
     count = onseterror(win_results)
     if count == True:
         if float(len(win_results))-float(win_results.count(0)) != 0:
