@@ -20,7 +20,7 @@ def stimulus(k,c,r):
 def dynamics(d,imbalance,ton,toff,dx,full=False):
     """returns solutions for system variables
     and time as arrays in key,value pairs"""
-    
+
     #unpack fixed parameters
     param = d
     beta = param['beta']
@@ -57,19 +57,19 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
     #z2 = []
     t = []
     i=-1
-    
+
     while i < totaltime:
         i += 1
         t.append(i*dt)
         stim_on = int(equil<i)
         S1 = k1*stim_on
         S2 = k2*stim_on
-        if full==True: 
+        if full==True:
             Z[0,0] = Z[0,0] -dt*(Z[0,0] + np.sqrt(dt)*sigma*np.random.randn())
             Z[1,0] = Z[1,0] -dt*(Z[1,0] + np.sqrt(dt)*sigma*np.random.randn())
 
-            U[0,1] = U[0,0]+dt*(-U[0,0]+gain_pl_sqrt(kb+S1 - beta*A[1,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[0,0])))/tau_u
-            U[1,1] = U[1,0]+dt*(-U[1,0]+gain_pl_sqrt(kb+S2 - beta*A[0,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[1,0])))/tau_u
+            U[0,1] = U[0,0]+dt*(-U[0,0]+gain_pl_sqrt(kb+S1 - beta*A[1,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[1,0])))/tau_u
+            U[1,1] = U[1,0]+dt*(-U[1,0]+gain_pl_sqrt(kb+S2 - beta*A[0,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[0,0])))/tau_u
             U[0,0] = U[0,1]
             U[1,0] = U[1,1]
 
@@ -86,15 +86,15 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
         else:
             Z[0,0] = Z[0,0] -dt*(Z[0,0] + np.sqrt(dt)*sigma*np.random.randn())
             Z[1,0] = Z[1,0] -dt*(Z[1,0] + np.sqrt(dt)*sigma*np.random.randn())
-            
-            U[0,1] = gain_pl_sqrt(kb+S1 - beta*A[1,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[0,0]))/tau_u
-            U[1,1] = gain_pl_sqrt(kb+S2 - beta*A[0,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[1,0]))/tau_u
+
+            U[0,1] = gain_pl_sqrt(kb+S1 - beta*A[1,0]*U[1,0] +alpha*U[0,0] + Z[0,0]*(1+mu*U[1,0]))/tau_u
+            U[1,1] = gain_pl_sqrt(kb+S2 - beta*A[0,0]*U[0,0] +alpha*U[0,1] + Z[1,0]*(1+mu*U[0,0]))/tau_u
             U[0,0]= U[0,1]
             U[1,0]= U[1,1]
 
             A[0,0] = A[0,0] + dt*(1 - A[0,0] - gamma*A[0,0]*U[0,0])/tau_a
             A[1,0] = A[1,0] + dt*(1 - A[1,0] - gamma*A[1,0]*U[1,0])/tau_a
-            
+
             u1.append(U[0,0])
             u2.append(U[1,0])
             #a1.append(A[0,0])
@@ -123,13 +123,13 @@ def dominance(N,xi,xj,pre=None):
         n = N[pre:]
         i = xi[pre:]
         j = xj[pre:]
-    
+
     length_of_time = range(len(n))
     t_n = [increment for increment in length_of_time]
     temp = []
     TD = []
     index=np.greater(i,j)
-    
+
     if np.all(index):
         #all i > j == True
         print "WARNING: NO rivalry dynamics detected"
@@ -138,7 +138,7 @@ def dominance(N,xi,xj,pre=None):
     else:
         sd = pd.Series(t_n,index=index)
         dom = np.asarray(sd.loc[False])
-    
+
         if dom.ndim == 0:
             print "WARNING: NO rivalry dynamics detected"
             TD.append(len(t_n))
@@ -159,7 +159,7 @@ def dominance(N,xi,xj,pre=None):
                 else:
                     TD.append(interval)
                     del temp[-1]
-            
+
             if len(TD) >= 3:
                 temp = []
                 del TD[0]
@@ -174,26 +174,26 @@ def dominance(N,xi,xj,pre=None):
                     TD.append(1) #small but not zero
                     print "WARNING: dom detected < 1"
                     return TD
-                
+
 def first_epoch(x,y,t,pre_t,dt):
     t1 = pre_t
     start = 100
     a=[]
     b=[]
     c=[]
-    
+
     a = x[t1:]
     b = y[t1:]
     c = t[t1:]
-    
+
     #find mean of background noise
     bkgnd = np.append(x[start:t1],y[start:t1],axis=0)
     meanbkgnd = np.mean(bkgnd)
-    
+
     #filter for signal above background
     u1corr = np.where(a>meanbkgnd,a,0)
     u2corr = np.where(b>meanbkgnd,b,0)
-    
+
     #set up time for finding intervals of percept dominance
     tz = range(len(c))
     maxu = np.amax(np.append(u2corr,u1corr,axis=0))
@@ -201,12 +201,12 @@ def first_epoch(x,y,t,pre_t,dt):
     threshold = maxu*0.6
     tfilter = np.where(diff>=threshold,tz,0)
     tsort = [i for i in tfilter if i!=0]
-    
+
     #constrains first epoch to be at least 50ms in duration
     duration = 49
     start=0
     jump=duration
-   
+
     #default if first percept is not found
     default = 0
     u1first=1
@@ -215,10 +215,10 @@ def first_epoch(x,y,t,pre_t,dt):
     n=-1
     stop = len(tsort)
     winner=True
-    
+
     while n<stop:
         n=+1
-    
+
         if stop<jump+1:
             n = stop
         else:
