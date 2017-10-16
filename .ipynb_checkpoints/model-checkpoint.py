@@ -13,7 +13,7 @@ def run(parameters,ntrials,onsettrial):
     ONSET = np.arange(onsettrial)
 
     dt = 1
-    dom_ms = 500000
+    dom_ms = 1000000
     onset_ms = 6000
 
     prestim = 6000

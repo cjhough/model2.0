@@ -1,4 +1,4 @@
-#usage mcmc.py 'initialtheta' 'total' 'save intervals' 'outfilename'
+#usage mcmc.py 'initialtheta' 'total' 'save intervals' 'outfilename' 'outfilepath'
 import pandas as pd
 import numpy as np
 from sys import argv
@@ -8,7 +8,7 @@ def chisq(data,model,variance):
     d = data
     m = model
     v = variance
-    
+
     #for first epoch probability
     fmax = lambda x:(max(x,0.001)**2)
     N1 = m['COUNTS_U1']
@@ -17,7 +17,7 @@ def chisq(data,model,variance):
     N2 = m['COUNTS_U2']
     x2 = (m['FIRST_EPOCH_PROB_U2']-data['FIRST_EPOCH_PROB_U2'])**2
     s2 = m['FIRST_EPOCH_PROB_U2'].map(fmax)
-    
+
     #other chi follow form: chi = ((d-m)**2)/(v**2)
     chi = pd.DataFrame()
     chi['FIRST_EPOCH_PROB_U1'] = (N1*(x1/s1) + N2*(x2/s2))
@@ -25,7 +25,7 @@ def chisq(data,model,variance):
     chi['MEAN_U2'] = ((m['MEAN_U2']-data['MEAN_U2'])**2)/(variance['MEAN_U2']**2)
     chi['SD_U1'] = ((m['SD_U1']-data['SD_U1'])**2)/(variance['SD_U1']**2)
     chi['SD_U2'] = ((m['SD_U2']-data['SD_U2'])**2)/(variance['SD_U2']**2)
-    
+
     return chi
 
 def chisum(df):
@@ -100,7 +100,7 @@ burntime = int(argv[2])
 savestep = int(argv[3])
 outfile = str(argv[4])
 savepoints = range(savestep,burntime,savestep)
-pathname = str('/Users/carly/CODE/model2.0/storeresults/')
+pathname = str(argv[5])
 outfilename = pathname+outfile
 
 thetafirst = pd.read_pickle(init_guess)
@@ -111,7 +111,7 @@ print theta_prop
 
 index = [0,20,40,60,80]
 cv = 0.6
-cv_var = 0.25
+cv_var = 0.1
 p1_var = 0.1
 fcv = lambda x: x*cv
 fcv_var = lambda x:(x*cv_var)
@@ -123,10 +123,10 @@ syU1 = pd.read_csv('syU1.csv',index_col=0)
 syU2 = pd.read_csv('syU2.csv',index_col=0)
 
 data = pd.DataFrame()
-data['FIRST_EPOCH_PROB_U1'] = syprob['U1']
-data['FIRST_EPOCH_PROB_U2'] = syprob['U2']
 data['COUNTS_U1'] = syprob['counts_U1']
 data['COUNTS_U2'] = syprob['counts_U2']
+data['FIRST_EPOCH_PROB_U1'] = syprob['U1']
+data['FIRST_EPOCH_PROB_U2'] = syprob['U2']
 data['MEAN_U1'] = syU1['MEAN']
 data['MEAN_U2'] = syU2['MEAN']
 data['SD_U1'] = data['MEAN_U1'].map(fcv)
@@ -135,10 +135,10 @@ data.index=index
 col = data.columns
 
 variance = pd.DataFrame()
-variance['FIRST_EPOCH_PROB_U1'] = data['FIRST_EPOCH_PROB_U1'].map(fp1_var)
-variance['FIRST_EPOCH_PROB_U2'] = data['FIRST_EPOCH_PROB_U2'].map(fp1_var)
 variance['COUNTS_U1'] = data['COUNTS_U1'].map(fp1_var)
 variance['COUNTS_U2'] = data['COUNTS_U2'].map(fp1_var)
+variance['FIRST_EPOCH_PROB_U1'] = data['FIRST_EPOCH_PROB_U1'].map(fp1_var)
+variance['FIRST_EPOCH_PROB_U2'] = data['FIRST_EPOCH_PROB_U2'].map(fp1_var)
 variance['MEAN_U1'] = data['MEAN_U1'].map(fcv_var)
 variance['MEAN_U2'] = data['MEAN_U2'].map(fcv_var)
 variance['SD_U1'] = data['SD_U1'].map(fcv_var)
@@ -153,7 +153,7 @@ print variance
 
 print"running current theta"
 sustained = 1
-onset = 100
+onset = 200
 m1 = model.run(theta_cur,sustained,onset)
 m1.index = index
 m1.columns = col
