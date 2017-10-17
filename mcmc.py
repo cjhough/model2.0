@@ -12,19 +12,19 @@ def chisq(data,model,variance):
     #for first epoch probability
     fmax = lambda x:(max(x,0.001)**2)
     N1 = m['COUNTS_U1']
-    x1 = (m['FIRST_EPOCH_PROB_U1']-data['FIRST_EPOCH_PROB_U1'])**2
+    x1 = (m['FIRST_EPOCH_PROB_U1']-d['FIRST_EPOCH_PROB_U1'])**2
     s1 = m['FIRST_EPOCH_PROB_U1'].map(fmax)
     N2 = m['COUNTS_U2']
-    x2 = (m['FIRST_EPOCH_PROB_U2']-data['FIRST_EPOCH_PROB_U2'])**2
+    x2 = (m['FIRST_EPOCH_PROB_U2']-d['FIRST_EPOCH_PROB_U2'])**2
     s2 = m['FIRST_EPOCH_PROB_U2'].map(fmax)
 
     #other chi follow form: chi = ((d-m)**2)/(v**2)
     chi = pd.DataFrame()
     chi['FIRST_EPOCH_PROB_U1'] = (N1*(x1/s1) + N2*(x2/s2))
-    chi['MEAN_U1'] = ((m['MEAN_U1']-data['MEAN_U1'])**2)/(variance['MEAN_U1']**2)
-    chi['MEAN_U2'] = ((m['MEAN_U2']-data['MEAN_U2'])**2)/(variance['MEAN_U2']**2)
-    chi['SD_U1'] = ((m['SD_U1']-data['SD_U1'])**2)/(variance['SD_U1']**2)
-    chi['SD_U2'] = ((m['SD_U2']-data['SD_U2'])**2)/(variance['SD_U2']**2)
+    chi['MEAN_U1'] = ((m['MEAN_U1']-d['MEAN_U1'])**2)/(v['MEAN_U1']**2)
+    chi['MEAN_U2'] = ((m['MEAN_U2']-d['MEAN_U2'])**2)/(v['MEAN_U2']**2)
+    chi['SD_U1'] = ((m['SD_U1']-d['SD_U1'])**2)/(v['SD_U1']**2)
+    chi['SD_U2'] = ((m['SD_U2']-d['SD_U2'])**2)/(v['SD_U2']**2)
 
     return chi
 
@@ -111,7 +111,7 @@ print theta_prop
 
 index = [0,20,40,60,80]
 cv = 0.6
-cv_var = 0.1
+cv_var = 0.2
 p1_var = 0.1
 fcv = lambda x: x*cv
 fcv_var = lambda x:(x*cv_var)
@@ -153,7 +153,7 @@ print variance
 
 print"running current theta"
 sustained = 1
-onset = 200
+onset = 100
 m1 = model.run(theta_cur,sustained,onset)
 m1.index = index
 m1.columns = col
