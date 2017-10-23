@@ -1,4 +1,5 @@
 #usage mcmc.py 'initialtheta' 'total' 'save intervals' 'outfilename' 'outfilepath'
+#fit only first epoch probability and cv
 import pandas as pd
 import numpy as np
 from sys import argv
@@ -21,8 +22,8 @@ def chisq(data,model,variance):
     #other chi follow form: chi = ((d-m)**2)/(v**2)
     chi = pd.DataFrame()
     chi['FIRST_EPOCH_PROB_U1'] = (N1*(x1/s1) + N2*(x2/s2))
-    chi['MEAN_U1'] = ((m['MEAN_U1']-d['MEAN_U1'])**2)/(v['MEAN_U1']**2)
-    chi['MEAN_U2'] = ((m['MEAN_U2']-d['MEAN_U2'])**2)/(v['MEAN_U2']**2)
+    #chi['MEAN_U1'] = ((m['MEAN_U1']-d['MEAN_U1'])**2)/(v['MEAN_U1']**2)
+    #chi['MEAN_U2'] = ((m['MEAN_U2']-d['MEAN_U2'])**2)/(v['MEAN_U2']**2)
     chi['SD_U1'] = ((m['SD_U1']-d['SD_U1'])**2)/(v['SD_U1']**2)
     chi['SD_U2'] = ((m['SD_U2']-d['SD_U2'])**2)/(v['SD_U2']**2)
 
@@ -151,6 +152,8 @@ print data
 print "this is variance:"
 print variance
 
+print"Fitting only first epoch probability and CV"
+
 print"running current theta"
 sustained = 1
 onset = 100
@@ -218,6 +221,7 @@ while n < burntime:
 
 save(THETA,CHI,SUM,x,n,outfilename)
 
+print"Fitting only first epoch probability and CV"
 print "done"
 
 #file1 = str("THETA"+outfile+".pkl")
