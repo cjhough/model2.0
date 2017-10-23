@@ -36,7 +36,8 @@ def dynamics(d,imbalance,ton,toff,dx,full=False):
     ks = param['ks']
     kc = param['kc']
     kb = param['kb']
-    k1 = stimulus(ks,kc,r)
+    k1 = ks
+    #k1 = stimulus(ks,kc,r)
     k2 = stimulus(ks,kc,-r)#weaker stimulus
 
     tf = ton
