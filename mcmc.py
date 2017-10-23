@@ -111,7 +111,7 @@ print theta_prop
 
 index = [0,20,40,60,80]
 cv = 0.6
-cv_var = 0.2
+cv_var = 0.1
 p1_var = 0.1
 fcv = lambda x: x*cv
 fcv_var = lambda x:(x*cv_var)
