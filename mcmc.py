@@ -1,4 +1,5 @@
 #usage mcmc.py 'initialtheta' 'total' 'save intervals' 'outfilename' 'outfilepath'
+#Fit only mean dominance times and CV
 import pandas as pd
 import numpy as np
 from sys import argv
@@ -10,17 +11,17 @@ def chisq(data,model,variance):
     v = variance
 
     #for first epoch probability
-    fmax = lambda x:(max(x,0.001)**2)
-    N1 = m['COUNTS_U1']
-    x1 = (m['FIRST_EPOCH_PROB_U1']-d['FIRST_EPOCH_PROB_U1'])**2
-    s1 = m['FIRST_EPOCH_PROB_U1'].map(fmax)
-    N2 = m['COUNTS_U2']
-    x2 = (m['FIRST_EPOCH_PROB_U2']-d['FIRST_EPOCH_PROB_U2'])**2
-    s2 = m['FIRST_EPOCH_PROB_U2'].map(fmax)
+    #fmax = lambda x:(max(x,0.001)**2)
+    #N1 = m['COUNTS_U1']
+    #x1 = (m['FIRST_EPOCH_PROB_U1']-d['FIRST_EPOCH_PROB_U1'])**2
+    #s1 = m['FIRST_EPOCH_PROB_U1'].map(fmax)
+    #N2 = m['COUNTS_U2']
+    #x2 = (m['FIRST_EPOCH_PROB_U2']-d['FIRST_EPOCH_PROB_U2'])**2
+    #s2 = m['FIRST_EPOCH_PROB_U2'].map(fmax)
 
     #other chi follow form: chi = ((d-m)**2)/(v**2)
     chi = pd.DataFrame()
-    chi['FIRST_EPOCH_PROB_U1'] = (N1*(x1/s1) + N2*(x2/s2))
+    #chi['FIRST_EPOCH_PROB_U1'] = (N1*(x1/s1) + N2*(x2/s2))
     chi['MEAN_U1'] = ((m['MEAN_U1']-d['MEAN_U1'])**2)/(v['MEAN_U1']**2)
     chi['MEAN_U2'] = ((m['MEAN_U2']-d['MEAN_U2'])**2)/(v['MEAN_U2']**2)
     chi['SD_U1'] = ((m['SD_U1']-d['SD_U1'])**2)/(v['SD_U1']**2)
@@ -151,9 +152,11 @@ print data
 print "this is variance:"
 print variance
 
+print"Fitting only mean dominance times and CV"
+
 print"running current theta"
 sustained = 1
-onset = 100
+onset = 2
 m1 = model.run(theta_cur,sustained,onset)
 m1.index = index
 m1.columns = col
@@ -218,6 +221,7 @@ while n < burntime:
 
 save(THETA,CHI,SUM,x,n,outfilename)
 
+print"Fitting only mean dominance times and CV"
 print "done"
 
 #file1 = str("THETA"+outfile+".pkl")
