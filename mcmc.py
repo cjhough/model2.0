@@ -39,9 +39,10 @@ def chisave(df):
     s1 = df[df.columns[0]]
     s2 = df[df.columns[1]]
     s3 = df[df.columns[2]]
-    s4 = df[df.columns[3]]
-    s5 = df[df.columns[4]]
-    save = [s1,s2,s3,s4,s5]
+    #s4 = df[df.columns[3]]
+    #s5 = df[df.columns[4]]
+    #save = [s1,s2,s3,s4,s5]
+    save = [s1,s2,s3]
     return save
 
 def taupen(tau_a):
