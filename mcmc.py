@@ -153,7 +153,7 @@ print variance
 
 print"running current theta"
 sustained = 1
-onset = 100
+onset = 200
 m1 = model.run(theta_cur,sustained,onset)
 m1.index = index
 m1.columns = col
